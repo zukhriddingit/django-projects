@@ -1,0 +1,48 @@
+First we create models, for example in this case we created BlogPost models with the python objects for the database. 
+Then we create the serializers, which help our program to convert the coming data to JSON format and deserialize it back. 
+
+So inside the serializer, we write:
+    class Meta:
+        model = BlogPost
+        fields = ["id", "title", "content", "published_date"]
+here, we always add id to the fields in the Meta class(metadata about the models or serializers), but we don't have to add id in the models. 
+
+Django Rest Framework(DRF) also has built-in views for updating, creating, deleting operations. 
+
+class BlogPostListCreate(generics.ListCreateAPIView):
+    queryset = BlogPost.objects.all()
+    serializer_class = BlogPostSerializer
+    
+An example of a view, so we are using ListCreateAPIview which will show us all the objects(queryset) in JSON format with the help of the serializer,
+generics are helping us to generate sample html for viewing these pages. 
+
+BUT, we still can't delete any blog posts, we can see them, we can add them for now. 
+
+one thing to note, views.py file is only in the new apps, not in the default created django project. So is models.py file. 
+However, they both have urls.py and url first goes to the main django project's url route.
+
+Here's the code for the new view, which will help us retrieve, update and delete(destroy) items in the DB:
+    
+class BlogPostRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = BlogPost.objects.all()
+    serializer_class = BlogPostSerializer
+    lookup_field = "pk"
+
+the queryset and the serializer_classes are the same, but the lookup_field is equal to "pk" which means PRIMARY KEY, 
+and apparently it will be used to find the items in DB that should be retrieved, updated or deleted
+
+Now we updated it all, and also added indexed path to the urls.py of api app. So now if we go to the url "127.0.0.1:8000/1/" we get our only blog post, 
+with id 1. We can modify its title and content and any field if it had more. Also, we can press the delete button to delete that blog post from out database.
+
+Now, here we used the built-in views for CRUD operations on our blog posts. However, we can also override them ourselves. 
+Here's how:
+
+class BlogPostListCreate(generics.ListCreateAPIView):
+    queryset = BlogPost.objects.all()
+    serializer_class = BlogPostSerializer
+    
+    # Overriding the ListCreateAPIView 
+    def delete(self, request, *args, **kwargs):
+        BlogPost.objects.all().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    

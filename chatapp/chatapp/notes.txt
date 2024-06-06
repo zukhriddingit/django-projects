@@ -1,0 +1,8 @@
+Chat App
+
+There should be multiple users, there should be chat channels, and users should be able to modify their messages (update), add messages (create), delete them (delete)
+
+A message will be inside a certain group (channel), which containes certain users. 
+
+Models: 
+Users, Messages, 
